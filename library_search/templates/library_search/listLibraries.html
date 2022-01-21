@@ -1,0 +1,38 @@
+{% comment %} <table>
+    <tr>
+        <th>Library Name</th>
+        <th></th>
+    </tr>
+    {% for lib in libraries %}
+    <tr>
+        <td>{{ lib.name }}</td>
+        <td><a href="{% url 'library_search:library_details' id=lib.id %}">Visit Page</a></td>
+    </tr>
+    {% endfor %}
+</table> {% endcomment %}
+
+{% comment %} <section class="mt-1 pt-2"> {% endcomment %}
+    <div class="container">
+       
+        <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Library Name</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for lib in libraries %}
+          <tr>
+            <th scope="row">{{forloop.counter}}</th>
+            <td>{{ lib.name }}</td>
+            <td><a href="{% url 'library_search:library_details' id=lib.id %}">Visit Page</a></td>
+          </tr>
+          {% endfor %}
+         
+          </tbody>
+          </table>
+          
+    </div>
+{% comment %} </section> {% endcomment %}

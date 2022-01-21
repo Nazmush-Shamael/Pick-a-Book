@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+<!-- Mirrored from demo.bootstrapious.com/directory/1-6-1/blog.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Apr 2021 09:21:30 GMT -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Add Exchange Book</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
+    <!-- Price Slider Stylesheets -->
+    <link rel="stylesheet" href="/media/css/nouislider.css">
+    <!-- Google fonts - Playfair Display-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,700">
+    <!-- Google fonts - Poppins-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,400i,700">
+    <!-- swiper-->
+    <link rel="stylesheet" href="/media/css/swiper.min.css">
+    <!-- Magnigic Popup-->
+    <link rel="stylesheet" href="/media/css/magnific-popup.css">
+    <!-- theme stylesheet-->
+    <link rel="stylesheet" href="/media/css/default.css" id="theme-stylesheet">
+    <!-- Custom stylesheet - for your changes-->
+    <link rel="stylesheet" href="/media/css/custom.css">
+    <script src="/media/js/main.js"> </script>
+
+</head>
+
+<body>
+<!--bootstrap-->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+<input type="hidden" id="csrf" value="{{csrf_token}}">
+    <header class="header">
+     
+      <nav class="navbar navbar-expand-lg fixed-top shadow navbar-dark bg-info" style="background-color: #9999ff;">
+        <div class="container-fluid">
+          <div class="d-flex align-items-center"><a class="navbar-brand py-1" href="/">
+          <h3>Pick-a-Book</h3>
+          </div>
+          <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-bars"></i></button>
+          <!-- Navbar Collapse -->
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            
+            <ul class="navbar-nav ml-auto">
+              
+              {% if request.user.is_authenticated %}
+              <li class="nav-item mt-3 mt-lg-0 ml-lg-3 d-lg-none d-xl-inline-block">
+                <a class="btn btn" style="background-color: #6EEA9D;" href="{% url 'posts:addExchangePost' %}">Add an exchange post</a>
+              </li>
+              <li class="nav-item mt-3 mt-lg-0 ml-lg-3 d-lg-none d-xl-inline-block">
+                <a href="{% url 'posts:myExPostList' %}" class="btn btn" style="background-color: #6EEA9D;">My exchange posts</a>
+              </li>
+              <li class="nav-item mt-3 mt-lg-0 ml-lg-3 d-lg-none d-xl-inline-block">
+                <a class="btn btn-danger" href="{% url 'logout_view' %}">Logout</a>
+              </li>
+              
+
+              {% else %}
+              <li class="nav-item mt-3 mt-lg-0 ml-lg-3 d-lg-none d-xl-inline-block">
+                <a class="btn btn-primary" href="{% url 'login_view' %}">Login</a>
+              </li>
+              <li class="nav-item mt-3 mt-lg-0 ml-lg-3 d-lg-none d-xl-inline-block">
+                <a class="btn btn-primary" href="{% url 'register_view' %}">Sign up</a>
+              </li>
+
+              {% endif %}
+
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <!-- /Navbar -->
+    </header>
+
+{% comment %} {% for ex in expost %}
+
+    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+          {% for i in images %}
+              {% if forloop.counter0 == 0 %}
+                    <div class="carousel-item active">
+              {% else %}
+                    <div class="carousel-item">
+              {% endif %}
+              <img src="{{ i.image.url }}" class="d-block w-100" alt="...">
+            </div>
+          {% endfor %}
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+
+    <p>Title: {{ ex.title }}</p><br>
+    <p>Author: {{ ex.author }}</p><br>
+    <p>Date purchased: {{ ex.purchase_date }}</p><br>
+    <p>Description</p>
+    <p>{{ ex.purchase_date }}</p><br>
+    {% if ex.edition != 0 %}
+        <p>Edition: {{ ex.edition }}</p><br>
+    {% endif %}
+    {% if ex.publisher != '' %}
+        <p>Publisher: {{ ex.publisher }}</p><br>
+    {% endif %}
+    <p>Preferred Books</p>
+    <p>{{ ex.prefered_books }}</p><br>
+    {% if request.user.id == ex.user.id %}
+        <a href="{% url 'posts:checkOfferList' id=ex.id %}">Check Offers</a><br>
+    {% elif request.user.is_authenticated %}
+        <a href="{% url 'posts:offerList' id=ex.id %}">Send Offer</a><br>
+    {% else %}
+        <p>Log in</p><!---link koira dio login er shathe-->
+    {% endif %}
+{% endfor %} {% endcomment %}
+
+
+<section>
+    <div class="container">
+     <div class="col-xl-12 col-lg-10 mx-auto mb-1 mt-6 hover-animate">
+    {% for ex in expost %}
+      <div class="card shadow border-5 h-50">
+        
+        <div class="row text-center">
+            <div class="col-xl-10 mx-auto mt-5">
+                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for i in images %}
+                        {% if forloop.counter0 == 0 %}
+                                <div class="carousel-item active">
+                        {% else %}
+                                <div class="carousel-item">
+                        {% endif %}
+                        <img src="{{ i.image.url }}" class="d-block w-100" alt="...">
+                        </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            {% comment %} <div class="col-xl-10 col-lg-10 mx-auto mb-2"> {% endcomment %}
+            <div class="col-xl-10 col-lg-10 mx-auto mb-1 hover-animate">
+                <div class="card shadow border-5 h-70 mb-2">
+                  <div class="col-xl-8 col-lg-10 mx-auto mb-1 mt-2">
+                    <p>Title: {{ ex.title }}</p><br>
+                    <p>Author: {{ ex.author }}</p><br>
+                    <p>Date purchased: {{ ex.purchase_date }}</p><br>
+                    <p>Description</p>
+                    <p>{{ ex.purchase_date }}</p><br>
+                    {% if ex.edition != 0 %}
+                        <p>Edition: {{ ex.edition }}</p><br>
+                    {% endif %}
+                    {% if ex.publisher != '' %}
+                        <p>Publisher: {{ ex.publisher }}</p><br>
+                    {% endif %}
+                    <p>Preferred Books</p>
+                    <p>{{ ex.prefered_books }}</p><br>
+                    {% if request.user.id == ex.user.id %}
+                        <a href="{% url 'posts:checkOfferList' id=ex.id %}" class="btn btn-primary">Check Offers</a><br>
+                    {% elif request.user.is_authenticated %}
+                        <a href="{% url 'posts:offerList' id=ex.id %}" class="btn btn-primary">Send Offer</a><br>
+                    {% else %}
+                        <p>Log in</p><!---link koira dio login er shathe-->
+                    {% endif %}
+                  </div>
+                </div>
+            </div>
+        </div>
+
+      </div>
+    {% endfor %}
+      </div>
+    </div>
+</section>
+
+</body>
+</html>
